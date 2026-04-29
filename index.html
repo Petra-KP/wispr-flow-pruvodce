@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wispr Flow — Interaktivní průvodce v češtině</title>
+<style>
+  :root {
+    --primary: #6C47FF;
+    --primary-light: #EEE9FF;
+    --primary-dark: #4B2FD6;
+    --accent: #FF6B35;
+    --green: #22C55E;
+    --green-light: #DCFCE7;
+    --yellow: #F59E0B;
+    --yellow-light: #FEF3C7;
+    --red: #EF4444;
+    --red-light: #FEE2E2;
+    --blue: #3B82F6;
+    --blue-light: #DBEAFE;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --sidebar-width: 260px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 24px; height: 58px;
+  }
+  .topbar-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 18px; color: var(--primary);
+    text-decoration: none;
+  }
+  .topbar-logo svg { flex-shrink: 0; }
+  .topbar-badge {
+    background: var(--primary-light); color: var(--primary);
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px;
+  }
+  .topbar-subtitle {
+    color: var(--gray-500); font-size: 13px; margin-left: 4px;
+  }
+  .hamburger {
+    display: none; background: none; border: none; cursor: pointer;
+    padding: 6px; margin-left: auto;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--gray-600); margin: 5px 0; border-radius: 2px;
+    transition: all .3s;
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    padding-top: 58px;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed; top: 58px; left: 0; bottom: 0;
+    width: var(--sidebar-width);
+    background: white;
+    border-right: 1px solid var(--gray-200);
+    overflow-y: auto;
+    padding: 20px 0 40px;
+    z-index: 50;
+    transition: transform .3s;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--gray-400);
+    padding: 16px 20px 6px;
+  }
+  .sidebar a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 20px;
+    text-decoration: none; color: var(--gray-600);
+    font-size: 14px; border-radius: 0;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a:hover { background: var(--gray-50); color: var(--primary); }
+  .sidebar a.active {
+    background: var(--primary-light); color: var(--primary);
+    font-weight: 600; border-left-color: var(--primary);
+  }
+  .sidebar a .icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    max-width: 900px;
+    padding: 40px 48px 80px;
+  }
+
+  /* ── SECTIONS ── */
+  .section { margin-bottom: 64px; scroll-margin-top: 80px; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .section-icon.purple { background: var(--primary-light); }
+  .section-icon.green { background: var(--green-light); }
+  .section-icon.blue { background: var(--blue-light); }
+  .section-icon.yellow { background: var(--yellow-light); }
+  .section-icon.red { background: var(--red-light); }
+  .section-title { font-size: 24px; font-weight: 700; color: var(--gray-900); }
+  .section-sub { font-size: 14px; color: var(--gray-500); margin-top: 2px; }
+
+  h3 { font-size: 17px; font-weight: 700; color: var(--gray-800); margin: 28px 0 12px; }
+  h4 { font-size: 14px; font-weight: 700; color: var(--gray-700); margin: 16px 0 8px; }
+  p { color: var(--gray-600); margin-bottom: 12px; font-size: 15px; }
+  ul, ol { padding-left: 20px; color: var(--gray-600); font-size: 15px; }
+  li { margin-bottom: 5px; }
+
+  /* ── PLATFORM TABS ── */
+  .tabs { margin: 20px 0; }
+  .tab-list {
+    display: flex; gap: 4px;
+    background: var(--gray-100); border-radius: 12px;
+    padding: 4px; margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border: none; border-radius: 9px;
+    background: transparent; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: var(--gray-500);
+    transition: all .2s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--gray-700); background: white; }
+  .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .tab-panel { display: none; padding: 24px 0 0; }
+  .tab-panel.active { display: block; }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+  .step {
+    display: flex; gap: 16px;
+    position: relative;
+  }
+  .step:not(:last-child)::before {
+    content: ''; position: absolute;
+    left: 19px; top: 40px; bottom: -8px; width: 2px;
+    background: var(--gray-200);
+  }
+  .step-num {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; margin-top: 1px; z-index: 1;
+  }
+  .step-body { flex: 1; padding-bottom: 20px; }
+  .step-title { font-weight: 700; font-size: 15px; color: var(--gray-800); margin-bottom: 4px; }
+  .step-desc { font-size: 14px; color: var(--gray-600); }
+
+  /* ── MENU PATH ── */
+  .menu-path {
+    display: inline-flex; align-items: center; flex-wrap: wrap;
+    gap: 4px; background: var(--gray-100); border: 1px solid var(--gray-200);
+    border-radius: 8px; padding: 6px 12px; font-size: 13px;
+    font-family: 'Segoe UI', monospace; color: var(--gray-700);
+    margin: 8px 0 12px;
+  }
+  .menu-path .arrow { color: var(--gray-400); font-size: 11px; }
+  .menu-path .item {
+    background: white; border: 1px solid var(--gray-300);
+    border-radius: 5px; padding: 2px 8px; color: var(--gray-700); font-weight: 600;
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: 10px; padding: 14px 16px;
+    margin: 14px 0; font-size: 14px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+  .callout-body { flex: 1; }
+  .callout-title { font-weight: 700; margin-bottom: 3px; }
+  .callout.tip { background: var(--green-light); color: #166534; }
+  .callout.warn { background: var(--yellow-light); color: #854D0E; }
+  .callout.pro { background: var(--primary-light); color: var(--primary-dark); }
+  .callout.info { background: var(--blue-light); color: #1E3A8A; }
+  .callout.danger { background: var(--red-light); color: #991B1B; }
+
+  /* ── PLAN CARDS ── */
+  .plan-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin: 20px 0;
+  }
+  .plan-card {
+    border: 2px solid var(--gray-200); border-radius: 14px;
+    padding: 24px 20px; background: white;
+    position: relative; transition: box-shadow .2s;
+  }
+  .plan-card:hover { box-shadow: 0 4px 20px rgba(108,71,255,.12); }
+  .plan-card.recommended {
+    border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,71,255,.1);
+  }
+  .plan-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--primary); color: white;
+    font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 99px;
+    white-space: nowrap;
+  }
+  .plan-name { font-size: 20px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px; }
+  .plan-price { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+  .plan-price span { font-size: 14px; font-weight: 500; color: var(--gray-500); }
+  .plan-desc { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
+  .plan-feature {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; color: var(--gray-700); margin-bottom: 7px;
+  }
+  .plan-feature .check { color: var(--green); font-size: 15px; flex-shrink: 0; }
+  .plan-feature .cross { color: var(--gray-300); font-size: 15px; flex-shrink: 0; }
+
+  /* ── LIMIT BADGE ── */
+  .limit-badge {
+    display: inline-block; background: var(--yellow-light); color: #92400E;
+    border: 1px solid #FDE68A; border-radius: 6px;
+    font-size: 12px; font-weight: 700; padding: 2px 8px; margin: 2px 0;
+  }
+
+  /* ── DEMO BOX ── */
+  .demo-box {
+    background: var(--gray-800); color: #E5E7EB;
+    border-radius: 10px; padding: 16px 20px; margin: 12px 0;
+    font-size: 14px; font-family: monospace;
+  }
+  .demo-box .said { color: #93C5FD; }
+  .demo-box .result { color: #6EE7B7; margin-top: 4px; }
+  .demo-box .label { color: var(--gray-400); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+
+  /* ── SECURITY ROW ── */
+  .security-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin: 16px 0;
+  }
+  .security-item {
+    background: white; border: 1px solid var(--gray-200); border-radius: 10px;
+    padding: 16px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .security-icon { font-size: 24px; flex-shrink: 0; }
+  .security-title { font-weight: 700; font-size: 14px; color: var(--gray-800); margin-bottom: 3px; }
+  .security-desc { font-size: 13px; color: var(--gray-500); }
+
+  /* ── SHORTCUT KEY ── */
+  kbd {
+    display: inline-block; background: var(--gray-100); color: var(--gray-700);
+    border: 1px solid var(--gray-300); border-bottom: 2px solid var(--gray-400);
+    border-radius: 5px; padding: 2px 8px; font-size: 12px; font-family: monospace;
+    font-weight: 700; white-space: nowrap;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .compare-table th {
+    background: var(--gray-800); color: white; padding: 10px 14px;
+    text-align: left; font-weight: 700;
+  }
+  .compare-table th:first-child { border-radius: 8px 0 0 0; }
+  .compare-table th:last-child { border-radius: 0 8px 0 0; }
+  .compare-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); }
+  .compare-table tr:hover td { background: var(--gray-50); }
+  .compare-table .yes { color: var(--green); font-weight: 700; }
+  .compare-table .no { color: var(--gray-300); }
+  .compare-table .pro-only { color: var(--primary); font-weight: 700; }
+
+  /* ── FAQ ACCORDION ── */
+  .faq { margin: 20px 0; }
+  .faq-item { border: 1px solid var(--gray-200); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .faq-q {
+    width: 100%; text-align: left; background: white;
+    border: none; cursor: pointer; padding: 14px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 600; color: var(--gray-800);
+    transition: background .15s;
+  }
+  .faq-q:hover { background: var(--gray-50); }
+  .faq-q .chevron { font-size: 12px; transition: transform .2s; color: var(--gray-400); }
+  .faq-q.open .chevron { transform: rotate(180deg); }
+  .faq-a { display: none; padding: 0 18px 14px; font-size: 14px; color: var(--gray-600); }
+  .faq-a.open { display: block; }
+
+  /* ── BUBBLE MOCK ── */
+  .flow-bubble-mock {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gray-900); color: white;
+    border-radius: 99px; padding: 10px 20px;
+    font-size: 14px; font-weight: 600; margin: 12px 0;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  .flow-bubble-mock .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.6; transform:scale(1.3); } }
+
+  /* ── BACK TO TOP ── */
+  .back-top {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: none; font-size: 18px;
+    box-shadow: 0 4px 14px rgba(108,71,255,.35);
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+    z-index: 200;
+  }
+  .back-top.visible { opacity: 1; pointer-events: all; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #6C47FF 0%, #9B6DFF 100%);
+    border-radius: 16px; padding: 36px 40px; margin-bottom: 40px; color: white;
+  }
+  .hero h1 { font-size: 30px; font-weight: 800; margin-bottom: 10px; }
+  .hero p { color: rgba(255,255,255,.85); font-size: 16px; margin-bottom: 20px; }
+  .hero-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-chip {
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+    border-radius: 99px; padding: 5px 14px; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ── QUICK NAV CARDS ── */
+  .quick-nav {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 48px;
+  }
+  .qn-card {
+    background: white; border: 1px solid var(--gray-200); border-radius: 12px;
+    padding: 18px 16px; text-decoration: none; color: var(--gray-700);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-align: center; transition: all .2s; font-size: 13px; font-weight: 600;
+  }
+  .qn-card:hover {
+    border-color: var(--primary); color: var(--primary);
+    box-shadow: 0 4px 12px rgba(108,71,255,.12); transform: translateY(-2px);
+  }
+  .qn-card .emoji { font-size: 26px; }
+
+  /* ── OVERLAY ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.4); z-index: 40;
+  }
+  .overlay.active { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 24px 20px 60px; }
+    .hamburger { display: block; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .security-grid { grid-template-columns: 1fr; }
+    .quick-nav { grid-template-columns: repeat(2, 1fr); }
+    .hero { padding: 24px; }
+    .hero h1 { font-size: 22px; }
+  }
+
+  @media (max-width: 600px) {
+    .quick-nav { grid-template-columns: 1fr 1fr; }
+    .main { padding: 16px 14px 60px; }
+  }
+
+  /* ── PROGRESS INDICATOR ── */
+  .progress-bar {
+    position: fixed; top: 58px; left: 0; right: 0; height: 3px;
+    background: var(--gray-200); z-index: 99;
+  }
+  .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width .1s; }
+
+  /* ── PRINT ── */
+  @media print {
+    .sidebar, .topbar, .back-top, .progress-bar, .hamburger { display: none !important; }
+    .main { margin-left: 0; padding: 0; }
+    .tab-panel { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <a class="topbar-logo" href="#uvod">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="8" fill="#6C47FF"/>
+      <path d="M8 10c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2l-3 3v-3H10a2 2 0 0 1-2-2v-4z" fill="white"/>
+    </svg>
+    Wispr Flow
+  </a>
+  <span class="topbar-badge">CZ průvodce</span>
+  <span class="topbar-subtitle">Kompletní návod v češtině</span>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-section-label">Začínáme</div>
+  <a href="#uvod" class="active" onclick="closeSidebar()"><span class="icon">🏠</span> Co je Wispr Flow</a>
+  <a href="#nastaveni" onclick="closeSidebar()"><span class="icon">⚙️</span> První nastavení</a>
+  <a href="#diktovat" onclick="closeSidebar()"><span class="icon">🎙️</span> Jak diktovat</a>
+
+  <div class="sidebar-section-label">Přesnost</div>
+  <a href="#slova" onclick="closeSidebar()"><span class="icon">📖</span> Správné přepisy slov</a>
+  <a href="#formatovani" onclick="closeSidebar()"><span class="icon">✨</span> Ehm, styly a věty</a>
+
+  <div class="sidebar-section-label">Plány & Bezpečnost</div>
+  <a href="#licence" onclick="closeSidebar()"><span class="icon">💳</span> Licence a plány</a>
+  <a href="#bezpecnost" onclick="closeSidebar()"><span class="icon">🔒</span> Bezpečnost a soukromí</a>
+
+  <div class="sidebar-section-label">Pokročilé</div>
+  <a href="#command" onclick="closeSidebar()"><span class="icon">⚡</span> Command Mode (Pro)</a>
+</nav>
+
+<!-- MAIN -->
+<div class="layout">
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>🎙️ Wispr Flow — Váš průvodce v češtině</h1>
+    <p>Vše, co potřebujete vědět: od prvního spuštění až po pokročilé nastavení.
+       Klikejte na sekce v levém menu nebo na rychlé karty níže.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">🖥️ Mac &amp; Windows</span>
+      <span class="hero-chip">📱 iOS &amp; Android</span>
+      <span class="hero-chip">🇨🇿 Čeština</span>
+      <span class="hero-chip">🆓 Free i Pro</span>
+    </div>
+  </div>
+
+  <!-- QUICK NAV -->
+  <div class="quick-nav">
+    <a class="qn-card" href="#nastaveni"><span class="emoji">⚙️</span>První nastavení</a>
+    <a class="qn-card" href="#diktovat"><span class="emoji">🎙️</span>Jak diktovat</a>
+    <a class="qn-card" href="#slova"><span class="emoji">📖</span>Správné slova</a>
+    <a class="qn-card" href="#formatovani"><span class="emoji">✨</span>Bez „ehm"</a>
+    <a class="qn-card" href="#licence"><span class="emoji">💳</span>Free vs Pro</a>
+    <a class="qn-card" href="#bezpecnost"><span class="emoji">🔒</span>Soukromí dat</a>
+    <a class="qn-card" href="#command"><span class="emoji">⚡</span>Command Mode</a>
+    <a class="qn-card" href="#faq"><span class="emoji">❓</span>FAQ</a>
+  </div>
+
+  <!-- ─────────────── SEKCE 1: CO JE WISPR FLOW ─────────────── -->
+  <section class="section" id="uvod">
+    <div class="section-header">
+      <div class="section-icon purple">🏠</div>
+      <div>
+        <div class="section-title">Co je Wispr Flow?</div>
+        <div class="section-sub">Stručný přehled aplikace — jak funguje a proč ji používat</div>
+      </div>
+    </div>
+
+    <p>Wispr Flow je aplikace pro <strong>hlasovou diktaci s AI</strong>, která funguje v jakékoli aplikaci na vašem zařízení. Mluvíte přirozeně a Flow automaticky přepíše vaši řeč do čistého, formátovaného textu — bez výplňových slov, s interpunkcí a správnou strukturou vět.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <div class="callout-title">Jak to funguje v praxi?</div>
+        Podržíte klávesovou zkratku (nebo klepnete na bublinu), řeknete, co chcete napsat — a Flow to okamžitě vloží jako čistý text tam, kde máte kurzor. Funguje v e-mailech, Slacku, Word, prohlížeči, VS Code, kdekoliv.
+      </div>
+    </div>
+
+    <h3>Klíčové funkce</h3>
+    <ul>
+      <li><strong>AI přepis v reálném čase</strong> — odstraňuje výplňová slova (ehm, ähm, no…), přidává interpunkci</li>
+      <li><strong>Funguje v každé aplikaci</strong> — e-mail, chat, dokumenty, terminál, IDE</li>
+      <li><strong>Vlastní slovník</strong> — naučíte ho vaše odborné termíny, jména, zkratky</li>
+      <li><strong>Flow Styles</strong> — různé styly pro různé aplikace (formální e-mail, neformální chat)</li>
+      <li><strong>Backtrack</strong> — opravíte se uprostřed věty hlasem, AI to pochopí</li>
+      <li><strong>Command Mode</strong> (Pro) — hlasem přepíšete označený text, přeložíte, zkrátíte</li>
+      <li><strong>Multiplatformní</strong> — Mac, Windows, iPhone, Android</li>
+      <li><strong>99 jazyků</strong> — včetně češtiny a slovenštiny</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <div class="callout-title">Kdy se to vyplatí?</div>
+        Výzkumy ukazují, že mluvením dokáže většina lidí produkovat 3–4× více textu za minutu než psaním. Flow je ideální pro psaní e-mailů, zpráv, poznámek, dokumentace nebo čehokoliv, kde píšete více než pár vět.
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── SEKCE 2: PRVNÍ NASTAVENÍ ─────────────── -->
+  <section class="section" id="nastaveni">
+    <div class="section-header">
+      <div class="section-icon green">⚙️</div>
+      <div>
+        <div class="section-title">První nastavení</div>
+        <div class="section-sub">Instalace a spuštění za méně než 5 minut — zvolte svou platformu</div>
+      </div>
+    </div>
+
+    <p>Vyberte svou platformu níže a postupujte krok po kroku:</p>
+
+    <div class="tabs" id="tabs-setup">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('setup','mac',this)">🍎 Mac</button>
+        <button class="tab-btn" onclick="switchTab('setup','win',this)">🪟 Windows</button>
+        <button class="tab-btn" onclick="switchTab('setup','ios',this)">📱 iPhone / iPad</button>
+        <button class="tab-btn" onclick="switchTab('setup','android',this)">🤖 Android</button>
+      </div>
+
+      <!-- MAC -->
+      <div class="tab-panel active" id="setup-mac">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Stáhněte a nainstalujte</div>
+              <div class="step-desc">Přejděte na <strong>wisprflow.ai</strong> a stáhněte macOS verzi. Otevřete DMG soubor a přetáhněte Wispr Flow do složky <strong>Aplikace</strong> (Applications) — podle oranžové šipky.</div>
+              <div class="menu-path"><span class="item">wisprflow.ai</span><span class="arrow">→</span><span class="item">Download</span><span class="arrow">→</span><span class="item">macOS</span></div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Přihlaste se nebo vytvořte účet</div>
+              <div class="step-desc">Spusťte Flow z Aplikací — ikona se zobrazí v <strong>menu baru</strong> nahoře. Klikněte na <strong>„Sign in via browser"</strong>. Otevře se prohlížeč, kde se přihlásíte přes Google, Apple, Microsoft nebo e-mail.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Udělte oprávnění</div>
+              <div class="step-desc">Flow potřebuje <strong>dvě oprávnění</strong>:</div>
+              <br>
+              <strong>Mikrofon:</strong>
+              <div class="menu-path"><span class="item">System Settings</span><span class="arrow">→</span><span class="item">Privacy &amp; Security</span><span class="arrow">→</span><span class="item">Microphone</span><span class="arrow">→</span><span class="item">Wispr Flow ✓</span></div>
+              <strong>Accessibility (zpřístupnění):</strong>
+              <div class="menu-path"><span class="item">System Settings</span><span class="arrow">→</span><span class="item">Privacy &amp; Security</span><span class="arrow">→</span><span class="item">Accessibility</span><span class="arrow">→</span><span class="item">Wispr Flow ✓</span></div>
+              <div class="callout warn" style="margin-top:8px">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-body">Bez oprávnění Accessibility Flow nedokáže vkládat text do aplikací. Toto oprávnění je klíčové.</div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Dokončete průvodce nastavením</div>
+              <div class="step-desc">
+                <ul>
+                  <li>🎙️ <strong>Test mikrofonu</strong> — mluvte a sledujte, zda se hýbají zvukové pruhy</li>
+                  <li>⌨️ <strong>Nastavte klávesovou zkratku</strong> — výchozí je klávesa <kbd>Fn</kbd>, můžete změnit</li>
+                  <li>🌍 <strong>Vyberte jazyky</strong> — přidejte češtinu nebo nechte Auto-detect</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Nastavení dokončeno!</div>
+              <div class="step-desc">Flow je spuštěný v menu baru. Klikněte do libovolného textového pole, podržte <kbd>Fn</kbd>, mluvte a pusťte. Text se okamžitě vloží.</div>
+              <div class="callout tip">
+                <div class="callout-icon">✅</div>
+                <div class="callout-body">Při prvním nastavení získáte automaticky <strong>14denní trial Flow Pro</strong> — bez platební karty.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WINDOWS -->
+      <div class="tab-panel" id="setup-win">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Stáhněte a nainstalujte</div>
+              <div class="step-desc">Přejděte na <strong>wisprflow.ai</strong>, stáhněte Windows installer (.exe). Spusťte instalátor a postupujte průvodcem. Ikona Flow se zobrazí v <strong>systémovém trayi</strong> (pravý dolní roh).</div>
+              <div class="menu-path"><span class="item">wisprflow.ai</span><span class="arrow">→</span><span class="item">Download</span><span class="arrow">→</span><span class="item">Windows</span></div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Přihlaste se nebo vytvořte účet</div>
+              <div class="step-desc">Klikněte na ikonu Flow v trayi, poté na <strong>„Sign in via browser"</strong>. Přihlaste se přes Google, Apple, Microsoft nebo e-mail.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Oprávnění pro mikrofon</div>
+              <div class="step-desc">Windows zpravidla vyžádá oprávnění automaticky. Pokud ne:</div>
+              <div class="menu-path"><span class="item">Settings</span><span class="arrow">→</span><span class="item">Privacy &amp; Security</span><span class="arrow">→</span><span class="item">Microphone</span><span class="arrow">→</span><span class="item">Wispr Flow ✓</span></div>
+              <div class="callout info">
+                <div class="callout-icon">💡</div>
+                <div class="callout-body">Pokud Flow detekuje mikrofon špatně, zkuste spustit aplikaci jako <strong>správce</strong> (pravý klik na ikonu → Spustit jako správce).</div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Dokončete průvodce nastavením</div>
+              <div class="step-desc">
+                <ul>
+                  <li>🎙️ Test mikrofonu — ověřte, že funguje</li>
+                  <li>⌨️ Nastavte zkratku (výchozí: <kbd>Ctrl</kbd>+<kbd>Win</kbd> nebo vlastní kombinace)</li>
+                  <li>🌍 Nastavte jazyky</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Hotovo!</div>
+              <div class="step-desc">Klikněte do textového pole, podržte zkratku, mluvte a pusťte. Text se vloží okamžitě.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- iOS -->
+      <div class="tab-panel" id="setup-ios">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Stáhněte z App Store</div>
+              <div class="step-desc">Vyhledejte <strong>„Wispr Flow"</strong> v App Store nebo přejděte na wisprflow.ai z iPhone. Nainstalujte aplikaci.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Přihlaste se</div>
+              <div class="step-desc">Přihlaste se pomocí Google, Apple, Microsoft nebo e-mailem. Stejný účet jako na počítači.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Povolte Flow klávesnici</div>
+              <div class="step-desc">Toto je nejdůležitější krok pro iPhone:</div>
+              <div class="menu-path"><span class="item">Nastavení</span><span class="arrow">→</span><span class="item">Obecné</span><span class="arrow">→</span><span class="item">Klávesnice</span><span class="arrow">→</span><span class="item">Klávesnice</span><span class="arrow">→</span><span class="item">Přidat novou klávesnici</span><span class="arrow">→</span><span class="item">Wispr Flow</span></div>
+              <p style="margin-top:8px">Pak klepněte na <strong>Wispr Flow</strong> v seznamu klávesnic a zapněte <strong>„Povolit úplný přístup"</strong>.</p>
+              <div class="callout warn">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-body">Bez „Úplného přístupu" klávesnice nebude schopna diktovat do ostatních aplikací.</div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Dokončete průvodce v aplikaci</div>
+              <div class="step-desc">Otevřete Wispr Flow, odpovězte na „Tell us about yourself". Klepněte na mikrofon — Flow požádá o oprávnění pro mikrofon, klepněte <strong>Povolit</strong>.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Aktivujte Flow klávesnici v aplikaci</div>
+              <div class="step-desc">Klepněte do libovolného textového pole v jakékoli aplikaci → přepněte na Flow klávesnici (globus ikona na klávesnici) → klepněte na tlačítko mikrofonu → mluvte → pusťte.</div>
+              <div class="callout tip">
+                <div class="callout-icon">✅</div>
+                <div class="callout-body">Tip: Nastavte si zkratku přes iOS Shortcuts pro rychlé spuštění Flow z akčního tlačítka nebo widgetu. Viz sekce v dokumentaci: <em>„How to Set Up Flow Shortcuts for iPhone"</em>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANDROID -->
+      <div class="tab-panel" id="setup-android">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Stáhněte z Google Play</div>
+              <div class="step-desc">Vyhledejte <strong>„Wispr Flow"</strong> na Google Play. Aplikace je k dispozici od února 2026 s neomezenou diktací v době spuštění.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Přihlaste se</div>
+              <div class="step-desc">Google, Apple nebo e-mail — stejný účet jako na ostatních zařízeních.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Povolte 4 povinná oprávnění</div>
+              <div class="step-desc">Android vyžaduje tato 4 oprávnění (postup se liší podle výrobce):</div>
+              <br>
+              <table style="width:100%;font-size:13px;border-collapse:collapse">
+                <tr style="background:var(--gray-100)">
+                  <th style="padding:8px;text-align:left;border-radius:6px 0 0 0">Oprávnění</th>
+                  <th style="padding:8px;text-align:left;border-radius:0 6px 0 0">Kde nastavit</th>
+                </tr>
+                <tr><td style="padding:8px;border-bottom:1px solid var(--gray-100)">🎙️ Mikrofon</td><td style="padding:8px;border-bottom:1px solid var(--gray-100)">Nastavení → Aplikace → Wispr Flow → Oprávnění</td></tr>
+                <tr><td style="padding:8px;border-bottom:1px solid var(--gray-100)">♿ Služba zpřístupnění</td><td style="padding:8px;border-bottom:1px solid var(--gray-100)">Nastavení → Zpřístupnění → Nainstalované aplikace → Wispr Flow</td></tr>
+                <tr><td style="padding:8px;border-bottom:1px solid var(--gray-100)">🪟 Zobrazení přes jiné aplikace</td><td style="padding:8px;border-bottom:1px solid var(--gray-100)">Nastavení → Aplikace → Wispr Flow → Zobrazovat přes ostatní aplikace</td></tr>
+                <tr><td style="padding:8px">🔋 Optimalizace baterie — vypnout</td><td style="padding:8px">Nastavení → Aplikace → Wispr Flow → Baterie → Bez omezení</td></tr>
+              </table>
+              <div class="callout warn" style="margin-top:10px">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-body"><strong>Samsung, Xiaomi, OnePlus</strong> mají vlastní systém správy baterie. Bez vypnutí optimalizace baterie může Android Flow ukončit na pozadí a Flow Bubble zmizí.</div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Dokončete průvodce</div>
+              <div class="step-desc">Po udělení všech oprávnění se na obrazovce zobrazí <strong>Flow Bubble</strong> (plovoucí bublina). To znamená, že vše funguje.</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout info">
+          <div class="callout-icon">🤖</div>
+          <div class="callout-body">Na Androidu Flow funguje přes <strong>Flow Bubble</strong> — plovoucí overlay nad ostatními aplikacemi. Klepnutím na ni spustíte diktování kdekoliv v systému.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── SEKCE 3: JAK DIKTOVAT ─────────────── -->
+  <section class="section" id="diktovat">
+    <div class="section-header">
+      <div class="section-icon blue">🎙️</div>
+      <div>
+        <div class="section-title">Jak diktovat</div>
+        <div class="section-sub">Tři způsoby spuštění diktace — na počítači i mobilu</div>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-diktat">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('diktat','desktop',this)">🖥️ Desktop (Mac/Win)</button>
+        <button class="tab-btn" onclick="switchTab('diktat','mobile',this)">📱 Mobil (iOS/Android)</button>
+      </div>
+
+      <!-- DESKTOP DIKTOVÁNÍ -->
+      <div class="tab-panel active" id="diktat-desktop">
+        <h3>Způsob 1: Push-to-talk (doporučeno)</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Klikněte do textového pole</div>
+              <div class="step-desc">Může to být e-mail, dokument, chat, pole na webu — kdekoliv, kde normálně píšete.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Podržte klávesovou zkratku</div>
+              <div class="step-desc">
+                Mac: <kbd>Fn</kbd> (výchozí) nebo vlastní kombinace<br>
+                Windows: vaše nastavená zkratka (např. <kbd>Ctrl</kbd>+<kbd>Alt</kbd>)<br><br>
+                Uslyšíte ping nebo uvidíte pohybující se pruhy — Flow naslouchá.
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Mluvte přirozeně</div>
+              <div class="step-desc">Mluvte normálním tempem. Nevadí říci „ehm" nebo opravit se — Flow to zpracuje. Říkejte interpunkci slovem: „tečka", „čárka", „otazník".</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Pusťte zkratku</div>
+              <div class="step-desc">Text se okamžitě vloží jako čistý formátovaný text. Flow přidá mezery, interpunkci a odstraní výplňová slova automaticky.</div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Způsob 2: Hands-free (beze zkratky)</h3>
+        <p>Stisknete zkratku jednou pro start, mluvíte, pak znovu stisknete pro stop.</p>
+        <div class="menu-path"><span class="item">Mac: Fn + Space</span><span class="arrow">→</span><span class="item">spustí hands-free</span></div>
+        <p>Poté mluvte volně. Pro zastavení stiskněte <kbd>Fn</kbd> (nebo vaši zkratku).</p>
+
+        <h3>Jak změnit klávesovou zkratku</h3>
+        <div class="menu-path"><span class="item">Flow icon</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">Shortcuts</span><span class="arrow">→</span><span class="item">Edit shortcut</span></div>
+        <div class="callout tip">
+          <div class="callout-icon">✅</div>
+          <div class="callout-body">Populární volba: <kbd>Option</kbd>+<kbd>Space</kbd> na Macu nebo <kbd>Alt</kbd>+<kbd>Space</kbd> na Windows. Nastavíte až 4 zkratky.</div>
+        </div>
+
+        <h3>Příklady toho, co říct</h3>
+        <div class="demo-box">
+          <div class="label">Co řeknete</div>
+          <div class="said">„Dobrý den tečka rád bych se zeptal na dostupnost zboží čárka které jsem viděl na vašem webu tečka"</div>
+          <div class="label" style="margin-top:10px">Co Flow napíše</div>
+          <div class="result">Dobrý den. Rád bych se zeptal na dostupnost zboží, které jsem viděl na vašem webu.</div>
+        </div>
+        <div class="demo-box">
+          <div class="label">Oprava mid-sentence (Backtrack)</div>
+          <div class="said">„Schůzka je ve dvě vlastně ve tři hodiny"</div>
+          <div class="result">Schůzka je ve tři hodiny.</div>
+        </div>
+        <div class="demo-box">
+          <div class="label">Tvorba seznamu</div>
+          <div class="said">„Moje cíle tento týden jsou jedna dokončit report dva odeslat prezentaci tři připravit schůzku"</div>
+          <div class="result">Moje cíle tento týden jsou:<br>1. Dokončit report<br>2. Odeslat prezentaci<br>3. Připravit schůzku</div>
+        </div>
+      </div>
+
+      <!-- MOBILE DIKTOVÁNÍ -->
+      <div class="tab-panel" id="diktat-mobile">
+        <h3>iPhone / iPad</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Klepněte do textového pole v jakékoli aplikaci</div>
+              <div class="step-desc">Zobrazí se klávesnice. Přepněte na Flow klávesnici (klepněte na ikonu globusu nebo zeměkoule).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Klepněte na tlačítko mikrofonu a držte</div>
+              <div class="step-desc">Nebo klepněte jednou pro hands-free režim. Mluvte přirozeně.</div>
+              <div class="flow-bubble-mock">
+                <div class="dot"></div>
+                Wispr Flow naslouchá…
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Pusťte / klepněte stop</div>
+              <div class="step-desc">Text se vloží přímo do textového pole. Pokud se text nevloží automaticky, zkontrolujte schránku — Flow ho zkopíruje tam jako zálohu.</div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Android — Flow Bubble</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Klepněte do textového pole</div>
+              <div class="step-desc">Zobrazí se <strong>Flow Bubble</strong> — plovoucí bublina na obrazovce.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Klepněte na bublinu a držte (nebo klepněte pro hands-free)</div>
+              <div class="step-desc">Push-to-talk: držte bublinu, mluvte, pusťte.<br>Hands-free: klepněte jednou → mluvte → klepněte znovu pro stop.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Počkejte na přepis</div>
+              <div class="step-desc">Flow vloží text do aplikace. Funguje kdekoliv v systému — Gmail, WhatsApp, Poznámky, prohlížeč…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <div class="callout-icon">📱</div>
+          <div class="callout-body"><strong>Flow Bubble schovat?</strong> Klepnutím a podržením ji přetáhněte na okraj obrazovky. Bubble zmizí, ale reaktivuje se při příštím klepnutí do textového pole.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Užitečné hlasové příkazy</h3>
+    <table class="compare-table">
+      <tr><th>Co říct</th><th>Co se stane</th></tr>
+      <tr><td>„tečka" / „čárka" / „otazník"</td><td>Vloží tečku / čárku / otazník</td></tr>
+      <tr><td>„nový řádek"</td><td>Odřádkuje (Enter)</td></tr>
+      <tr><td>„nový odstavec"</td><td>Nový odstavec</td></tr>
+      <tr><td>„stiskni enter"</td><td>Vloží text a odešle (v chatech)</td></tr>
+      <tr><td>„vlastně…" / „ne čekat…"</td><td>Backtrack — smaže předchozí část věty</td></tr>
+      <tr><td>„jedna… dvě… tři…"</td><td>Vytvoří číslovaný seznam</td></tr>
+    </table>
+  </section>
+
+  <!-- ─────────────── SEKCE 4: SPRÁVNÉ PŘEPISY SLOV ─────────────── -->
+  <section class="section" id="slova">
+    <div class="section-header">
+      <div class="section-icon yellow">📖</div>
+      <div>
+        <div class="section-title">Správné přepisy slov</div>
+        <div class="section-sub">Nastavení jazyků, vlastní slovník a opravy špatných přepisů</div>
+      </div>
+    </div>
+
+    <p>Flow přepisuje slova pomocí AI, ale může se mýlit u odborných termínů, jmen nebo cizích slov. Tato sekce vysvětluje, jak ho naučit vaši slovní zásobu.</p>
+
+    <!-- JAZYKY -->
+    <h3>1. Nastavení jazyka</h3>
+    <p>Správně nastavený jazyk je základ dobrého přepisu. Čím méně jazyků vyberete, tím přesnější přepis bude.</p>
+
+    <div class="tabs" id="tabs-lang">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('lang','desktop2',this)">🖥️ Mac / Windows</button>
+        <button class="tab-btn" onclick="switchTab('lang','ios2',this)">📱 iOS</button>
+        <button class="tab-btn" onclick="switchTab('lang','android2',this)">🤖 Android</button>
+      </div>
+      <div class="tab-panel active" id="lang-desktop2">
+        <div class="menu-path"><span class="item">Flow icon</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">General</span><span class="arrow">→</span><span class="item">Languages</span></div>
+        <p>Vyberte jazyky, které skutečně používáte. Klikněte <strong>Save</strong>. Změna se projeví od příší diktace.</p>
+      </div>
+      <div class="tab-panel" id="lang-ios2">
+        <div class="menu-path"><span class="item">Nastavení</span><span class="arrow">→</span><span class="item">General</span><span class="arrow">→</span><span class="item">Set Language</span></div>
+        <p>Vyberte jazyky nebo nechte <strong>Auto-detect</strong> pro automatickou detekci z 99 jazyků.</p>
+      </div>
+      <div class="tab-panel" id="lang-android2">
+        <div class="menu-path"><span class="item">Settings</span><span class="arrow">→</span><span class="item">Languages</span><span class="arrow">→</span><span class="item">Add more</span></div>
+        <p>Android nemá Auto-detect — vyberte alespoň jeden jazyk ručně. Klepněte <strong>Done</strong>.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>Pro češtinu:</strong> Vyberte pouze češtinu (nebo češtinu + angličtinu, pokud mícháte). Auto-detect s více jazyky může být méně přesný. U varianty <em>Čeština</em> Flow rozumí standardní i hovorové češtině.
+      </div>
+    </div>
+
+    <!-- SLOVNÍK -->
+    <h3>2. Vlastní slovník — naučte Flow vaše slova</h3>
+    <p>Slovník je seznam slov, která Flow má prioritně rozpoznávat. Přidejte jména kolegů, firemní termíny, zkratky nebo slova, která Flow opakovaně špatně přepisuje.</p>
+
+    <div class="tabs" id="tabs-dict">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('dict','deskdict',this)">🖥️ Mac / Windows</button>
+        <button class="tab-btn" onclick="switchTab('dict','iosdict',this)">📱 iOS</button>
+        <button class="tab-btn" onclick="switchTab('dict','androiddict',this)">🤖 Android</button>
+      </div>
+      <div class="tab-panel active" id="dict-deskdict">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Otevřete Slovník</div>
+              <div class="step-desc">V levém panelu aplikace klikněte na <strong>Dictionary</strong>.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Přidejte slovo</div>
+              <div class="step-desc">Klikněte na <strong>Add new</strong>. Napište slovo (max. 60 znaků). Klikněte <strong>Save</strong>.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Testujte</div>
+              <div class="step-desc">Diktujte větu s novým slovem. Pokud Flow přepíše správně — vše funguje.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-panel" id="dict-iosdict">
+        <div class="menu-path"><span class="item">Wispr Flow</span><span class="arrow">→</span><span class="item">Dictionary (spodní lišta)</span><span class="arrow">→</span><span class="item">+</span></div>
+        <p>Napište slovo a klepněte <strong>Save</strong>.</p>
+      </div>
+      <div class="tab-panel" id="dict-androiddict">
+        <div class="menu-path"><span class="item">Wispr Flow</span><span class="arrow">→</span><span class="item">Dictionary (spodní lišta)</span><span class="arrow">→</span><span class="item">+</span></div>
+        <p>Napište slovo a klepněte <strong>Add</strong>.</p>
+      </div>
+    </div>
+
+    <h3>3. Oprava špatného přepisu (Replacement rule)</h3>
+    <p>Pokud Flow opakovaně přepisuje slovo špatně (např. místo „Novák" napíše „Novák" a vy chcete „NOVÁK"), nastavte pravidlo opravy:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Přidejte nový záznam</div>
+          <div class="step-desc">Klikněte <strong>Dictionary → Add new</strong>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Zapněte „Correct a misspelling"</div>
+          <div class="step-desc">Zadejte <strong>správné slovo</strong> (to, co chcete mít), přepněte toggle <strong>„Correct a misspelling"</strong> a zadejte <strong>špatný přepis</strong> (co Flow píše nyní).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Uložte</div>
+          <div class="step-desc">Klikněte <strong>Save</strong>. Flow od nynějška automaticky nahradí špatný přepis tím správným.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-box">
+      <div class="label">Příklad — oprava názvu firmy</div>
+      <div class="said">Flow píše: „wisper flow" nebo „whisper flow"</div>
+      <div class="result">→ Přidejte pravidlo: správné = „Wispr Flow", špatné = „whisper flow"</div>
+    </div>
+
+    <h3>4. Tipy pro nejlepší přesnost</h3>
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <ul style="margin:0;padding-left:18px">
+          <li>Přidejte jména kolegů, firemní termíny, zkratky a produkty</li>
+          <li>Přidejte slovo i v množném čísle (API a APIsek / APIs)</li>
+          <li>Hvězdičkou označte nejdůležitější slova — dostanou vyšší prioritu</li>
+          <li>Hromadný import přes CSV soubor (Mac/Win): <strong>Settings → Experimental → Bulk Import</strong></li>
+          <li>Slovník se synchronizuje mezi všemi vašimi zařízeními</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── SEKCE 5: EHM, STYLY A VĚTY ─────────────── -->
+  <section class="section" id="formatovani">
+    <div class="section-header">
+      <div class="section-icon purple">✨</div>
+      <div>
+        <div class="section-title">Bez „ehm" — styly a správné věty</div>
+        <div class="section-sub">Smart Formatting, Flow Styles, Backtrack a jak správně formulovat</div>
+      </div>
+    </div>
+
+    <!-- SMART FORMATTING -->
+    <h3>Smart Formatting — automatické odstranění výplňových slov</h3>
+    <p>Flow <strong>automaticky odstraňuje</strong> výplňová slova jako „ehm", „ähm", „no", „tak jako" — bez jakéhokoliv nastavení. Smart Formatting je zapnutý ve výchozím stavu.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>Výplňová slova nejdou „vypnout"</strong> — tato funkce je vždy aktivní. Flow je odstraňuje jako součást AI zpracování. Nemusíte nic nastavovat, stačí mluvit přirozeně.
+      </div>
+    </div>
+
+    <p>Smart Formatting dělá i tyto věci automaticky:</p>
+    <ul>
+      <li>Přidává interpunkci a velká písmena</li>
+      <li>Formátuje čísla (říkáte „sedm" → Flow napíše „7")</li>
+      <li>Přizpůsobuje styl aplikaci (v chatech odstraní tečky na konci)</li>
+      <li>Rozumí kontextu — malé písmeno uprostřed věty, velké po tečce</li>
+    </ul>
+
+    <p><strong>Kde ověřit, že je zapnutý:</strong></p>
+
+    <div class="tabs" id="tabs-smartfmt">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('smartfmt','sf-desk',this)">🖥️ Mac / Windows</button>
+        <button class="tab-btn" onclick="switchTab('smartfmt','sf-ios',this)">📱 iOS</button>
+      </div>
+      <div class="tab-panel active" id="smartfmt-sf-desk">
+        <div class="menu-path"><span class="item">Flow icon</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">System</span><span class="arrow">→</span><span class="item">Extras</span><span class="arrow">→</span><span class="item">Smart Formatting ✓</span></div>
+      </div>
+      <div class="tab-panel" id="smartfmt-sf-ios">
+        <div class="menu-path"><span class="item">Wispr Flow</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">Personalization</span><span class="arrow">→</span><span class="item">Smart Formatting ✓</span></div>
+      </div>
+    </div>
+
+    <!-- BACKTRACK -->
+    <h3>Backtrack — oprava uprostřed věty</h3>
+    <p>Flow automaticky rozumí opravám. Pokud se přeříknete, stačí říct přirozeně opravující slovo — Flow pochopí, co měnit.</p>
+
+    <div class="demo-box">
+      <div class="label">Bez klíčového slova</div>
+      <div class="said">„Odeslat e-mail Petrovi … Novákovi"</div>
+      <div class="result">Odeslat e-mail Novákovi.</div>
+    </div>
+    <div class="demo-box">
+      <div class="label">Se slovem „vlastně"</div>
+      <div class="said">„Schůzka bude ve čtyři vlastně v pět hodin"</div>
+      <div class="result">Schůzka bude v pět hodin.</div>
+    </div>
+    <div class="demo-box">
+      <div class="label">S frází „to ne čekat"</div>
+      <div class="said">„Rád bych koupil ten červený to ne čekat ten modrý svetr"</div>
+      <div class="result">Rád bych koupil ten modrý svetr.</div>
+    </div>
+
+    <!-- FLOW STYLES -->
+    <h3>Flow Styles — tón a formátování podle aplikace</h3>
+    <p>Styles nastavují, jak Flow formátuje text — formálně, neformálně nebo nadšeně. Pro každou kategorii aplikací si nastavíte jiný styl.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">Flow Styles fungují pouze pro <strong>anglický jazyk</strong> (US nebo britská angličtina). Pro češtinu nebo jiné jazyky se styly nezobrazí — Flow formátuje text bez stylů.</div>
+    </div>
+
+    <p><strong>Dostupné styly a kategorie:</strong></p>
+    <table class="compare-table">
+      <tr><th>Kategorie</th><th>Dostupné styly</th><th>Výchozí</th></tr>
+      <tr><td>💬 Osobní zprávy (WhatsApp, iMessage)</td><td>Formální, Neformální, Velmi neformální</td><td>Neformální</td></tr>
+      <tr><td>💼 Pracovní zprávy (Slack, Teams)</td><td>Formální, Neformální, Nadšený</td><td>Formální</td></tr>
+      <tr><td>📧 E-mail</td><td>Formální, Neformální, Nadšený</td><td>Formální</td></tr>
+      <tr><td>📄 Ostatní (dokumenty, weby)</td><td>Formální, Neformální, Nadšený</td><td>Formální</td></tr>
+    </table>
+
+    <h4>Jak nastavit styl:</h4>
+    <div class="tabs" id="tabs-styles">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('styles','st-desk',this)">🖥️ Mac / Windows</button>
+        <button class="tab-btn" onclick="switchTab('styles','st-ios',this)">📱 iOS</button>
+        <button class="tab-btn" onclick="switchTab('styles','st-android',this)">🤖 Android</button>
+      </div>
+      <div class="tab-panel active" id="styles-st-desk">
+        <div class="menu-path"><span class="item">Flow app</span><span class="arrow">→</span><span class="item">Styles (levý panel)</span><span class="arrow">→</span><span class="item">Vyberte kategorii</span><span class="arrow">→</span><span class="item">Klikněte styl</span></div>
+        <p>Změna se projeví okamžitě v nových diktacích.</p>
+      </div>
+      <div class="tab-panel" id="styles-st-ios">
+        <div class="menu-path"><span class="item">Wispr Flow</span><span class="arrow">→</span><span class="item">Styles (spodní lišta)</span><span class="arrow">→</span><span class="item">Záložka kategorie</span><span class="arrow">→</span><span class="item">Klepněte styl</span></div>
+        <p>Na iOS klávesnici je tlačítko stylu — klepnutím dočasně přepnete styl pro aktuální session.</p>
+      </div>
+      <div class="tab-panel" id="styles-st-android">
+        <div class="menu-path"><span class="item">Wispr Flow</span><span class="arrow">→</span><span class="item">Style (spodní navigace)</span><span class="arrow">→</span><span class="item">Vyberte kategorii</span><span class="arrow">→</span><span class="item">Klepněte styl</span><span class="arrow">→</span><span class="item">Save !</span></div>
+        <div class="callout warn"><div class="callout-icon">⚠️</div><div class="callout-body">Na Androidu musíte klepnout na <strong>Save</strong> — jinak se změna neuloží.</div></div>
+      </div>
+    </div>
+
+    <h3>Naučte Flow váš styl psaní (anglicky)</h3>
+    <p>Přidáte vzorové texty svého psaní (50–500 slov, až 5 vzorků) — Flow se naučí váš osobní styl pro polish funkce.</p>
+    <div class="menu-path"><span class="item">Flow app</span><span class="arrow">→</span><span class="item">Polish</span><span class="arrow">→</span><span class="item">Nastavení promptu</span><span class="arrow">→</span><span class="item">Writing Examples</span><span class="arrow">→</span><span class="item">Přidat vzor</span></div>
+  </section>
+
+  <!-- ─────────────── SEKCE 6: LICENCE A PLÁNY ─────────────── -->
+  <section class="section" id="licence">
+    <div class="section-header">
+      <div class="section-icon green">💳</div>
+      <div>
+        <div class="section-title">Licence a plány</div>
+        <div class="section-sub">Basic Free vs Pro vs Enterprise — kdy co stačí</div>
+      </div>
+    </div>
+
+    <div class="plan-grid">
+      <!-- FREE -->
+      <div class="plan-card">
+        <div class="plan-name">Basic</div>
+        <div class="plan-price">Zdarma <span>/ navždy</span></div>
+        <div class="plan-desc">Pro vyzkoušení a lehké využití</div>
+        <div class="plan-feature"><span class="check">✓</span> Základní diktace (AI přepis)</div>
+        <div class="plan-feature"><span class="check">✓</span> Vlastní slovník</div>
+        <div class="plan-feature"><span class="check">✓</span> Smart Formatting</div>
+        <div class="plan-feature"><span class="check">✓</span> Mac, Windows, iOS, Android</div>
+        <div class="plan-feature"><span class="cross">✗</span> <span class="limit-badge">2 000 slov/týden desktop</span></div>
+        <div class="plan-feature"><span class="cross">✗</span> <span class="limit-badge">1 000 slov/týden iOS</span></div>
+        <div class="plan-feature"><span class="cross">✗</span> Command Mode</div>
+        <div class="plan-feature"><span class="cross">✗</span> Neomezená diktace</div>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan-card recommended">
+        <div class="plan-badge">⭐ Doporučeno</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">~$12 <span>/ měsíc (roční)</span></div>
+        <div class="plan-desc">Pro pravidelné uživatele a profesionály</div>
+        <div class="plan-feature"><span class="check">✓</span> <strong>Neomezená diktace</strong></div>
+        <div class="plan-feature"><span class="check">✓</span> <strong>Command Mode</strong> (hlasová editace)</div>
+        <div class="plan-feature"><span class="check">✓</span> Vše z Basic</div>
+        <div class="plan-feature"><span class="check">✓</span> Prioritní nové funkce</div>
+        <div class="plan-feature"><span class="check">✓</span> Týmová spolupráce</div>
+        <div class="plan-feature"><span class="check">✓</span> 14 dní trial ZDARMA</div>
+      </div>
+
+      <!-- ENTERPRISE -->
+      <div class="plan-card">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">Na dotaz</div>
+        <div class="plan-desc">Pro firmy a organizace</div>
+        <div class="plan-feature"><span class="check">✓</span> Vše z Pro</div>
+        <div class="plan-feature"><span class="check">✓</span> SSO (firemní přihlášení)</div>
+        <div class="plan-feature"><span class="check">✓</span> HIPAA BAA</div>
+        <div class="plan-feature"><span class="check">✓</span> Zero Data Retention</div>
+        <div class="plan-feature"><span class="check">✓</span> Admin portál</div>
+        <div class="plan-feature"><span class="check">✓</span> Dedikovaná podpora</div>
+      </div>
+    </div>
+
+    <h3>Kdy stačí Free verze?</h3>
+    <p>Free verze je vhodná, pokud:</p>
+    <ul>
+      <li>Diktujete méně než cca <strong>200–300 vět týdně</strong> (2 000 slov na desktopu)</li>
+      <li>Chcete si Flow jen vyzkoušet</li>
+      <li>Používáte ji na mobilu lehce (1 000 slov/týden na iOS)</li>
+    </ul>
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Limity Free plánu:</strong><br>
+        Desktop: měkký limit 2 000 slov/týden, tvrdý limit 5 000 slov/týden.<br>
+        iOS: měkký limit 1 000 slov/týden, tvrdý limit 1 500 slov/týden.<br>
+        Limit se resetuje každou neděli ve 12:00 v noci (americký čas PT).
+      </div>
+    </div>
+
+    <h3>Kdy přejít na Pro?</h3>
+    <div class="callout pro">
+      <div class="callout-icon">⭐</div>
+      <div class="callout-body">
+        Přejděte na Pro, pokud pravidelně narážíte na týdenní limit, chcete <strong>Command Mode</strong> (hlasová úprava textu) nebo potřebujete neomezené diktování. Trial je zdarma po dobu 14 dní — <strong>bez platební karty</strong>.
+      </div>
+    </div>
+
+    <h3>Studentská sleva</h3>
+    <p>Wispr Flow nabízí studentské slevy. Ověřte v nastavení účtu nebo na webu wisprflow.ai.</p>
+    <div class="menu-path"><span class="item">app.wisprflow.ai</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">Plans &amp; Billing</span><span class="arrow">→</span><span class="item">Discounts</span></div>
+  </section>
+
+  <!-- ─────────────── SEKCE 7: BEZPEČNOST ─────────────── -->
+  <section class="section" id="bezpecnost">
+    <div class="section-header">
+      <div class="section-icon red">🔒</div>
+      <div>
+        <div class="section-title">Bezpečnost a soukromí</div>
+        <div class="section-sub">Co se ukládá, co se neukládá, šifrování a Privacy Mode</div>
+      </div>
+    </div>
+
+    <div class="security-grid">
+      <div class="security-item">
+        <div class="security-icon">🔐</div>
+        <div>
+          <div class="security-title">Šifrování přenosu (TLS)</div>
+          <div class="security-desc">Veškerý přenos hlasu i textu je šifrován pomocí TLS. Nikdo nemůže zachytit vaše hlasové nahrávky při přenosu.</div>
+        </div>
+      </div>
+      <div class="security-item">
+        <div class="security-icon">🏢</div>
+        <div>
+          <div class="security-title">SOC 2 Type II</div>
+          <div class="security-desc">Wispr Flow je certifikován dle SOC 2 Type II. Pravidelné bezpečnostní audity třetími stranami.</div>
+        </div>
+      </div>
+      <div class="security-item">
+        <div class="security-icon">🔑</div>
+        <div>
+          <div class="security-title">Přístup k datům</div>
+          <div class="security-desc">Zaměstnanci Wispr mají přístup k datům pouze přes MFA a RBAC (role-based access). Pravidelné revize přístupů.</div>
+        </div>
+      </div>
+      <div class="security-item">
+        <div class="security-icon">🛡️</div>
+        <div>
+          <div class="security-title">HIPAA podpora</div>
+          <div class="security-desc">Pro zdravotnická zařízení je dostupný HIPAA BAA. Po podpisu je Privacy Mode trvale uzamčen.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACY MODE -->
+    <h3>Privacy Mode — nulové ukládání dat</h3>
+    <p>Privacy Mode je nejdůležitější nastavení pro soukromí. Když je zapnutý, Flow zpracuje vaši řeč a <strong>okamžitě ji zahodí</strong> — žádný audio ani text se na serverech Wispr neukládá.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">🔒</div>
+      <div class="callout-body">
+        <strong>Co Privacy Mode dělá:</strong>
+        <ul style="margin:6px 0 0 16px">
+          <li>Audio je zpracováno a okamžitě smazáno ze serverů</li>
+          <li>Přepis se neukládá na serverech po skončení session</li>
+          <li>Data se nepoužívají pro trénování AI modelu</li>
+          <li>Automaticky vypne „Help improve Flow" (jsou vzájemně exkluzivní)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Jak zapnout Privacy Mode:</h4>
+    <div class="tabs" id="tabs-privacy">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab('privacy','pr-desk',this)">🖥️ Mac / Windows</button>
+        <button class="tab-btn" onclick="switchTab('privacy','pr-mob',this)">📱 iOS / Android</button>
+      </div>
+      <div class="tab-panel active" id="privacy-pr-desk">
+        <div class="menu-path"><span class="item">Flow icon</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">Data &amp; Privacy</span><span class="arrow">→</span><span class="item">Privacy Mode ✓</span></div>
+        <p>Změna se projeví okamžitě, není potřeba restartovat.</p>
+      </div>
+      <div class="tab-panel" id="privacy-pr-mob">
+        <div class="menu-path"><span class="item">Wispr Flow</span><span class="arrow">→</span><span class="item">Settings</span><span class="arrow">→</span><span class="item">Data &amp; Privacy</span><span class="arrow">→</span><span class="item">Privacy Mode ✓</span></div>
+        <p>Platí okamžitě, bez restartu.</p>
+      </div>
+    </div>
+
+    <h3>Lokální ukládání dat (Mac / Windows)</h3>
+    <p>Samostatně od serverů si můžete říct, jak Flow ukládá historii přepisů <em>lokálně na vašem zařízení</em>:</p>
+    <div class="menu-path"><span class="item">Settings</span><span class="arrow">→</span><span class="item">Data &amp; Privacy</span><span class="arrow">→</span><span class="item">Local data storage</span></div>
+    <table class="compare-table">
+      <tr><th>Možnost</th><th>Co se děje</th></tr>
+      <tr><td>Store data locally (výchozí)</td><td>Historie přepisů se ukládá normálně</td></tr>
+      <tr><td>Auto-delete every 24 hours</td><td>Záznamy starší 24 h se automaticky mažou</td></tr>
+      <tr><td>Never store data locally</td><td>Žádná historie se neukládá, existující se okamžitě smaže</td></tr>
+    </table>
+    <div class="callout danger">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">Výběr „Never store data locally" <strong>okamžitě smaže</strong> veškerou existující lokální historii. Tato akce je nevratná — zobrazí se potvrzovací dialog.</div>
+    </div>
+
+    <h3>Co se vždy sbírá (i s Privacy Mode)</h3>
+    <p>Privacy Mode se týká pouze <strong>obsahu diktací</strong>. Následující se může sbírat i při zapnutém Privacy Mode pro provozní účely:</p>
+    <ul>
+      <li>Informace o účtu (e-mail, jméno)</li>
+      <li>Metadata využití (časová razítka, délka session, použité funkce)</li>
+      <li>Technické logy (chyby, diagnostika)</li>
+      <li>Fakturační informace</li>
+    </ul>
+
+    <div class="faq" id="faq-security">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Jsou moje hlasové záznamy bezpečné? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ano. Hlasové záznamy jsou šifrovány TLS při přenosu a šifrovány v cloudovém úložišti. Pokud zapnete Privacy Mode, záznamy se nezachovávají vůbec — jsou zpracovány a okamžitě smazány.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Používá Wispr moje data pro trénování AI? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ve výchozím nastavení (bez Privacy Mode) mohou být vaše přepisy použity pro zlepšení modelu. Pokud zapnete Privacy Mode nebo vypnete „Help improve Flow", data se pro trénování nepoužijí.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Co se stane s daty po zrušení účtu? <span class="chevron">▼</span></button>
+        <div class="faq-a">Po zrušení účtu jsou data smazána dle Data Processing Addendum. Pokud byl Privacy Mode zapnutý, žádná data diktací nebyla uložena. Podrobnosti viz Trust Center: trust.wispr.ai</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── SEKCE 8: COMMAND MODE ─────────────── -->
+  <section class="section" id="command">
+    <div class="section-header">
+      <div class="section-icon blue">⚡</div>
+      <div>
+        <div class="section-title">Command Mode <span style="background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:8px">PRO</span></div>
+        <div class="section-sub">Hlasová editace textu — přepište, zkraťte, přeložte označený text</div>
+      </div>
+    </div>
+
+    <div class="callout pro">
+      <div class="callout-icon">⭐</div>
+      <div class="callout-body">Command Mode vyžaduje <strong>placené předplatné</strong> (nebo aktivní trial). Je dostupný na Mac a Windows. Na iOS fungují pouze vyhledávací příkazy.</div>
+    </div>
+
+    <h3>Jak aktivovat Command Mode</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Zapněte v nastavení</div>
+          <div class="step-desc"><div class="menu-path"><span class="item">Settings</span><span class="arrow">→</span><span class="item">Experimental</span><span class="arrow">→</span><span class="item">Command Mode ✓</span></div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Označte text v libovolné aplikaci</div>
+          <div class="step-desc">Vyberte část textu, kterou chcete upravit (jako při kopírování).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Podržte Command Mode zkratku</div>
+          <div class="step-desc">
+            Mac: <kbd>Fn</kbd>+<kbd>Ctrl</kbd><br>
+            Windows: <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>Alt</kbd>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Řekněte příkaz a pusťte</div>
+          <div class="step-desc">Flow nahradí označený text výsledkem vašeho příkazu. Vrátit zpět: <kbd>Cmd</kbd>+<kbd>Z</kbd> (Mac) nebo <kbd>Ctrl</kbd>+<kbd>Z</kbd> (Windows).</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Příklady příkazů</h3>
+    <div class="demo-box">
+      <div class="label">Zkrácení</div>
+      <div class="said">Označíte odstavec → říkáte: „Zkrať to na dvě věty"</div>
+      <div class="result">→ Flow přepíše odstavec na stručnější verzi</div>
+    </div>
+    <div class="demo-box">
+      <div class="label">Změna tónu</div>
+      <div class="said">Označíte e-mail → říkáte: „Přepiš to formálněji"</div>
+      <div class="result">→ Flow přepíše e-mail formálním tónem</div>
+    </div>
+    <div class="demo-box">
+      <div class="label">Překlad</div>
+      <div class="said">Označíte anglický text → říkáte: „Přelož do češtiny"</div>
+      <div class="result">→ Flow nahradí text českým překladem</div>
+    </div>
+    <div class="demo-box">
+      <div class="label">Formátování jako seznam</div>
+      <div class="said">Označíte text → říkáte: „Přeformátuj jako odrážkový seznam"</div>
+      <div class="result">→ Flow vytvoří odrážkový seznam</div>
+    </div>
+    <div class="demo-box">
+      <div class="label">Vyhledávání (bez označeného textu)</div>
+      <div class="said">Bez výběru textu → říkáte: „Vyhledej nejlepší restaurace v Praze"</div>
+      <div class="result">→ Otevře se Perplexity s vaším dotazem</div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">Přiřadit Command Mode na myš (tlačítko myši 4–10): <div class="menu-path" style="display:inline-flex;margin-top:6px"><span class="item">Settings</span><span class="arrow">→</span><span class="item">Shortcuts</span><span class="arrow">→</span><span class="item">Command Mode</span><span class="arrow">→</span><span class="item">Přidat zkratku myši</span></div></div>
+    </div>
+  </section>
+
+  <!-- ─────────────── FAQ ─────────────── -->
+  <section class="section" id="faq">
+    <div class="section-header">
+      <div class="section-icon yellow">❓</div>
+      <div>
+        <div class="section-title">Časté otázky</div>
+        <div class="section-sub">Nejčastější dotazy a rychlé odpovědi</div>
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Flow nepřepisuje správně česká slova — co s tím? <span class="chevron">▼</span></button>
+        <div class="faq-a">1. Zkontrolujte, že máte nastavenou češtinu: <em>Settings → General → Languages → Čeština</em>. 2. Odeberte jazyky, které nepoužíváte — méně jazyků = lepší přesnost. 3. Přidejte problematická slova do Slovníku. 4. Pro opakovaně špatné přepisy použijte Replacement rule.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Odstraní Flow výplňová slova jako „ehm" automaticky? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ano. Smart Formatting automaticky odstraňuje výplňová slova jako „ehm", „ähm", „no tak", „takže" apod. Tato funkce je vždy aktivní a není třeba ji speciálně nastavovat — stačí mluvit přirozeně.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Funguje Flow bez připojení k internetu? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ne. Flow ke svému fungování potřebuje připojení k internetu — přepis probíhá na serverech Wispr. Bez internetu diktace nefunguje.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Synchronizují se nastavení mezi zařízeními? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ano. Slovník, snippety a jazyková nastavení se synchronizují mezi všemi vašimi zařízeními (Mac, Windows, iOS, Android) automaticky. Synchronizace stylu může trvat až 1 hodinu.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Mohu Flow používat v IDE (VS Code, Cursor)? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ano. Flow funguje ve VS Code, Cursor a dalších IDE. Specifické nastavení najdete v dokumentaci: <em>„Use Flow with Cursor, VS Code, and other IDEs"</em>.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Jak změním klávesovou zkratku pro diktaci? <span class="chevron">▼</span></button>
+        <div class="faq-a">Mac/Windows: <em>Flow icon → Settings → Shortcuts → Edit shortcut</em>. Nastavíte až 4 různé zkratky. Doporučená kombinace: Option+Space nebo Alt+Space.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Flow Bubble na Androidu zmizela — co dělat? <span class="chevron">▼</span></button>
+        <div class="faq-a">Pravděpodobně Android ukončil Flow na pozadí. Řešení: <em>Nastavení → Aplikace → Wispr Flow → Baterie → Bez omezení</em>. U Samsung ještě: Nastavení → Baterie → Správce baterie → Wispr Flow → Neomezeno. Poté restartujte Wispr Flow.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Proč mě Flow nepřepisuje do polí v některých aplikacích? <span class="chevron">▼</span></button>
+        <div class="faq-a">Na Macu zkontrolujte oprávnění Accessibility: <em>System Settings → Privacy &amp; Security → Accessibility → Wispr Flow ✓</em>. Na Windows spusťte Flow jako správce (pravý klik → Spustit jako správce). Zkontrolujte, zda je aplikace v aktuální verzi.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div style="margin-top:60px;padding-top:30px;border-top:1px solid var(--gray-200);text-align:center;color:var(--gray-400);font-size:13px">
+    <p>Průvodce vytvořen na základě <a href="https://docs.wisprflow.ai/" target="_blank" style="color:var(--primary)">oficiální dokumentace Wispr Flow</a> · Aktualizováno duben 2026</p>
+    <p style="margin-top:6px">Pro nejnovější informace vždy navštivte <a href="https://docs.wisprflow.ai/" target="_blank" style="color:var(--primary)">docs.wisprflow.ai</a></p>
+  </div>
+
+</main>
+</div>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Zpět nahoru">↑</button>
+
+<script>
+// ── TABS ──
+function switchTab(group, id, btn) {
+  // deactivate all panels in this group
+  document.querySelectorAll(`[id^="${group}-"]`).forEach(p => p.classList.remove('active'));
+  // deactivate all buttons in this tab list
+  btn.closest('.tab-list').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  // activate selected
+  document.getElementById(`${group}-${id}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FAQ ──
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  answer.classList.toggle('open', !isOpen);
+}
+
+// ── SIDEBAR ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('active');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+// ── ACTIVE SIDEBAR LINK (scroll spy) ──
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.sidebar a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// ── BACK TO TOP ──
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ── PROGRESS BAR ──
+const progressFill = document.getElementById('progressFill');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progressFill.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+});
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
