@@ -8,13 +8,13 @@ Offline HTML návod podle dokumentace Wispr Flow: první nastavení (Mac / Windo
 2. Dvojklikem ho otevřete v Chromu / Edge / Firefoxu (`file:///…`).
 3. Nemusíte nic instalovat — vše je v jednom souboru.
 
-## GitHub Pages (volitelné webové rozhraní)
+## Veřejný odkaz na web (GitHub Pages)
 
-V repozitáři na GitHubu: **Settings → Pages**. U **Source** nastavte větev `main`, složka `/ (root)`. Po chvíli bude návod dostupný jako webová stránka:
+Po nasazení bude návod dostupný i jako běžná webová stránka (bez stahování souboru):
 
-**https://Petra-KP.github.io/wispr-flow-pruvodce/**
+**https://petra-kp.github.io/wispr-flow-pruvodce/**
 
-(Odkaz začne fungovat až po zapnutí Pages; jméno adresy odpovídá adresářové URL repozitáře.)
+První načtení po úpravách může trvat krátce několik minut.
 
 ## Licence obsahu průvodce
 
