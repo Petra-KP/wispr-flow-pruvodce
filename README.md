@@ -1,6 +1,6 @@
 # Wispr Flow — interaktivní průvodce (čeština)
 
-Offline HTML návod podle dokumentace Wispr Flow: první nastavení (Mac / Windows / iOS / Android), diktát, slovník, styly, plány Free vs Pro, soukromí, Command Mode.
+Offline HTML návod podle dokumentace Wispr Flow: první nastavení (Mac / Windows / iOS / Android), diktát, slovník, styly, plány Free vs Pro, **bezpečnost a použití ve firmě** (kam jdou data, Privacy Mode / ZDR, Enterprise, Context Awareness), Command Mode.
 
 ## Jak si průvodce otevřít
 
