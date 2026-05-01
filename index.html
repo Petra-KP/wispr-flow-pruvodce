@@ -1256,7 +1256,7 @@
       <div class="section-icon red">🔒</div>
       <div>
         <div class="section-title">Bezpečnost a soukromí</div>
-        <div class="section-sub">Co se ukládá, co se neukládá, šifrování a Privacy Mode</div>
+        <div class="section-sub">Kde se data zpracovávají, Privacy Mode, firemní režim (Enterprise) a řízení rizik</div>
       </div>
     </div>
 
@@ -1271,8 +1271,8 @@
       <div class="security-item">
         <div class="security-icon">🏢</div>
         <div>
-          <div class="security-title">SOC 2 Type II</div>
-          <div class="security-desc">Wispr Flow je certifikován dle SOC 2 Type II. Pravidelné bezpečnostní audity třetími stranami.</div>
+          <div class="security-title">SOC 2 Type II a ISO 27001</div>
+          <div class="security-desc">K dispozici je SOC 2 Type II; certifikace ISO 27001 je dle oficiální dokumentace v přípravě. Report SOC 2 lze u Wispr vyžádat přes dokumentaci Help Center.</div>
         </div>
       </div>
       <div class="security-item">
@@ -1291,8 +1291,58 @@
       </div>
     </div>
 
+    <h3>Kam jdou má data a jak fungují</h3>
+    <p>Wispr Flow diktaci zpracovává přes vlastní backend (AI přepis a formátování): <strong>audio z mikrofonu</strong> a související metadata se posílají po <strong>TLS/HTTPS</strong> na infrastrukturu Wispr, kde proběhne přepis; výsledek pak aplikace vloží do aplikace, ve které píšete. Data „v klidu“ na straně cloudu podléhají <strong>šifrování a kontrolám na úrovni poskytovatele infrastruktury</strong> podle dokumentace Wispr Flow.</p>
+    <div class="callout info">
+      <div class="callout-icon">📍</div>
+      <div class="callout-body">
+        <strong>Stručně:</strong>
+        <ul style="margin:6px 0 0 16px">
+          <li><strong>Bez Privacy Mode:</strong> obsah diktací podléhá podmínkám ochrany soukromí — může být dle nastavení využit i ke zlepšování modelů („Help improve Flow“).</li>
+          <li><strong>S Privacy Mode (nulové uložení):</strong> po přepisu se obsah diktace na serverech Wispr <strong>neponechávává</strong> a <strong>nepoužívá ke trénování</strong>; smluvně mají ani zpracovatelé nedržet po zpracování.</li>
+          <li><strong>Na zařízení:</strong> kromě toho řídíte, zda má mít aplikace <strong>lokální historii přepisů</strong> (viz níže).</li>
+        </ul>
+        Oficiální přehled: <a href="https://docs.wisprflow.ai/articles/3147443438-security-overview" target="_blank" rel="noopener">Security Overview</a>, případně <a href="https://trust.wispr.ai/" target="_blank" rel="noopener">Trust Center (trust.wispr.ai)</a> a <a href="https://docs.wisprflow.ai/articles/5375461355-subprocessors-third-party-security" target="_blank" rel="noopener">Subprocessors</a>.
+      </div>
+    </div>
+
+    <h3>Použití ve firmě (Enterprise)</h3>
+    <p>Pro nasazení v organizaci Wispr nabízí plán <strong>Enterprise</strong> vedle klasického „osobního“ účtu. Firemní admin spravuje pravidla v <strong>admin portálu</strong>, ne jen v osobních nastaveních jednotlivé aplikace (např. vynucení ZDR, SSO nebo omezení lokální historie se nastavuje pro celou organizaci).</p>
+
+    <table class="compare-table">
+      <tr><th>Firemní možnost</th><th>Co to znamená v praxi</th></tr>
+      <tr><td><strong>SSO / SAML</strong></td><td>Přihlášení přes firemní identitu (např. Okta, Microsoft Entra). Lze <strong>vynutit</strong>, že přihlášení jen přes SSO (ostatní způsoby zablokuje) — činné jen u aktivního Enterprise předplatného.</td></tr>
+      <tr><td><strong>SCIM</strong></td><td>Automatické zřizování a rušení uživatelů přes váš identity provider.</td></tr>
+      <tr><td><strong>Zero Data Retention (ZDR)</strong></td><td>Organizace vynucuje <strong>Privacy Mode všem uživatelům</strong> — jednotlivec ho nemůže vypnout.</td></tr>
+      <tr><td><strong>Lokální uchovávání přepisů</strong></td><td>Admin nastaví minimální úroveň: lokálně ukládat / mazat starší než 24 h / <strong>neměnit lokálně vůbec</strong>. U nejpřísnější politiky je volba zamčena uživatelům.</td></tr>
+      <tr><td><strong>Context Awareness (organizačně)</strong></td><td>Na Enterprise lze funkci používající kontext z obrazovky <strong>vypnout pro všechny</strong> — přepínač v osobních nastaveních bude zamčený s hláškou, že řídí organizace (<em>Data Controls</em>).</td></tr>
+      <tr><td><strong>HIPAA BAA</strong></td><td>Pro zdravotnické scénáře — podpis BAA trvale drží zapnutý Privacy Mode; někdy se BAA řeší na úrovni organizace přes admin portál.</td></tr>
+      <tr><td><strong>Omezení domény</strong></td><td>Volitelně lze blokovat přihlášení adres z firemní domény, které nejsou ve vaší organizaci; případně automaticky přidávat uživatele.</td></tr>
+    </table>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>Projekt ve firmě — typický postup:</strong> (1) právník / DPO zkontroluje <a href="https://trust.wispr.ai/" target="_blank" rel="noopener">Trust Center</a> a případně DPA/BAA (2) IT zajistí <strong>SSO</strong>, sedadla uživatelů a případně <strong>ZDR</strong> nebo politiku mazání lokálních přepisů (3) školení zaměstnanců: kdy používat Privacy Mode osobně, co znamená Context Awareness na firemních noteboocích.<br>Přehled řízení dat: <a href="https://wisprflow.ai/data-controls" target="_blank" rel="noopener">wisprflow.ai/data-controls</a>.
+      </div>
+    </div>
+
+    <h3>Context Awareness (pouze desktop)</h3>
+    <p>V aplikaci pro <strong>Mac a Windows</strong> najdete v <span class="menu-path" style="display:inline-flex;vertical-align:middle;margin:0 4px"><span class="item">Settings</span><span class="arrow">→</span><span class="item">Data &amp; Privacy</span></span> přepínač <strong>Context Awareness</strong> (obvykle výchozí zapnutý). Flow může využívat kontext okolo kurzoru (text na obrazovce) kvůli lepšímu přepisu a formátování. Pokud firma funkci zakáže, uživatel přepínač nemění.</p>
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">U citlivého obsahu (např. zdraví, právnické dokumenty, interní systémy) konzultujte s bezpečností a compliance, jestli povolit Context Awareness, nebo v Enterprise požádejte o celoplošné vypnutí.</div>
+    </div>
+
+    <h3>Mobily a citlivější aplikace</h3>
+    <ul>
+      <li><strong>iOS:</strong> u uživatelů pod <strong>HIPAA</strong> jsou dle dokumentace omezenější funkce jako indexace poznámek ve Spotlightu, některé Siri integrace či AI souhrny poznámek — aby se obsah nevystavoval mimo řízené prostředí.</li>
+      <li><strong>Android:</strong> Wispr udává, že <strong>bublina Flow je v řadě bankovních aplikací skryta</strong> (stovky aplikací v několika regionech) a text z těchto aplikací se nečte jako kontext přepisu.</li>
+      <li>Podrobnější řízení lokálních přepisů (dropdown „Local data storage“) je dle dokumentace prioritně na <strong>desktopu</strong>; na mobilu řešení souvisí více s historií v aplikaci a Privacy Mode.</li>
+    </ul>
+
     <!-- PRIVACY MODE -->
-    <h3>Privacy Mode — nulové ukládání dat</h3>
+    <h3>Privacy Mode — nulové ukládání dat na serverech</h3>
     <p>Privacy Mode je nejdůležitější nastavení pro soukromí. Když je zapnutý, Flow zpracuje vaši řeč a <strong>okamžitě ji zahodí</strong> — žádný audio ani text se na serverech Wispr neukládá.</p>
 
     <div class="callout info">
@@ -1323,6 +1373,9 @@
         <p>Platí okamžitě, bez restartu.</p>
       </div>
     </div>
+
+    <h3>Enterprise a lokální historie přepisů</h3>
+    <p>Jestliže vaši organizaci platí Enterprise, admin portál umí stanovit minimálně tak přísnou politiku, že uživatel <strong>sám nemůže</strong> ukládat přepisy delší lokálně. U politiky „nezapisovat lokálně vůbec“ je přepínač často zamčený. Dokumentace zmiňuje i to, že pravidla by měla držet funkčnost i při výpadku připojení (politiky se mohou držet načtené).</p>
 
     <h3>Lokální ukládání dat (Mac / Windows)</h3>
     <p>Samostatně od serverů si můžete říct, jak Flow ukládá historii přepisů <em>lokálně na vašem zařízení</em>:</p>
@@ -1357,8 +1410,12 @@
         <div class="faq-a">Ve výchozím nastavení (bez Privacy Mode) mohou být vaše přepisy použity pro zlepšení modelu. Pokud zapnete Privacy Mode nebo vypnete „Help improve Flow", data se pro trénování nepoužijí.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Co se stane s daty po zrušení účtu? <span class="chevron">▼</span></button>
-        <div class="faq-a">Po zrušení účtu jsou data smazána dle Data Processing Addendum. Pokud byl Privacy Mode zapnutý, žádná data diktací nebyla uložena. Podrobnosti viz Trust Center: trust.wispr.ai</div>
+        <button class="faq-q" onclick="toggleFaq(this)">Potřebujeme Flow ve firmě — co vyjednat před rolloutem? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ujistěte se o souladu GDPR / interních pravidelích: kde se zpracovává hlas, zda nastavíte <strong>Privacy Mode</strong> nebo Enterprise <strong>ZDR</strong>, jestli používáte <strong>Context Awareness</strong>, a kde bývá <strong>lokální historie</strong> na noteboocích. Právní dokumenty a zpracovatelé: <strong>trust.wispr.ai</strong>, řízení dat: <strong>wisprflow.ai/data-controls</strong>. Pro větší týmy obvykle <strong>Enterprise</strong> + SSO.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Může IT „zapnout nulové ukládání“ všem a nepřičuchnout osobních přepínačů? <span class="chevron">▼</span></button>
+        <div class="faq-a">Ano přes Enterprise administraci — <strong>Zero Data Retention</strong> vynucuje Privacy Mode u všech. Samostatně lze řídit <strong>místní mazání transcriptů</strong> (základní uchovávání vs. po 24 h vs. bez lokálních záznamů) a centrálně vypnout <strong>Context Awareness</strong>.</div>
       </div>
     </div>
   </section>
